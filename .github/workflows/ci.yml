@@ -1,0 +1,33 @@
+name: Quality checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.11', '3.12']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Compile Python source
+        run: python -m compileall -q sqlbench
+      - name: Validate browser JavaScript syntax
+        run: node --check web/app.js
+      - name: Run unit and HTTP API tests
+        run: python -m unittest discover -s tests -v
+      - name: Smoke test CLI with synthetic plan
+        run: python -m sqlbench plan examples/sample-scan.sqlplan

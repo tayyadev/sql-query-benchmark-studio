@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ktns-sql-benchmark-studio"
+version = "0.1.0"
+description = "Offline SQL Server plan inspector and read-only SQLite benchmark studio"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [{name = "KTNSINNOVATIONS LLC"}]
+keywords = ["sql", "execution-plan", "benchmark", "sqlite", "sqlserver", "performance"]
+classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS Independent"]
+dependencies = []
+
+[project.scripts]
+sqlbench = "sqlbench.__main__:main"
+
+[tool.setuptools]
+packages = ["sqlbench"]

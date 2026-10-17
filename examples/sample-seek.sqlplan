@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.5" Build="16.0.1000.6">
+ <BatchSequence><Batch><Statements>
+  <StmtSimple StatementText="SELECT CustomerID FROM dbo.DemoOrders WHERE Status = 'paid'" StatementId="1" StatementType="SELECT" StatementSubTreeCost="0.224" StatementEstRows="1200">
+   <QueryPlan CachedPlanSize="16" CompileTime="2" CompileCPU="2">
+    <RelOp NodeId="0" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="1200" EstimatedTotalSubtreeCost="0.224"><OutputList/>
+     <IndexScan Ordered="true" ScanDirection="FORWARD"><Object Database="[Demo]" Schema="[dbo]" Table="[DemoOrders]" Index="[IX_Status_CustomerID]"/></IndexScan>
+    </RelOp>
+   </QueryPlan>
+  </StmtSimple>
+ </Statements></Batch></BatchSequence>
+</ShowPlanXML>

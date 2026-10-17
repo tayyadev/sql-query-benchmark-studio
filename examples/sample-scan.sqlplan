@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.5" Build="16.0.1000.6">
+ <BatchSequence><Batch><Statements>
+  <StmtSimple StatementText="SELECT CustomerID FROM dbo.DemoOrders WHERE Status = 'paid'" StatementId="1" StatementType="SELECT" StatementSubTreeCost="1.824" StatementEstRows="1200">
+   <QueryPlan CachedPlanSize="16" CompileTime="2" CompileCPU="2">
+    <MissingIndexes><MissingIndexGroup Impact="82.7"><MissingIndex Database="[Demo]" Schema="[dbo]" Table="[DemoOrders]"><ColumnGroup Usage="EQUALITY"><Column Name="[Status]" /></ColumnGroup><ColumnGroup Usage="INCLUDE"><Column Name="[CustomerID]" /></ColumnGroup></MissingIndex></MissingIndexGroup></MissingIndexes>
+    <RelOp NodeId="0" PhysicalOp="Table Scan" LogicalOp="Table Scan" EstimateRows="1200" EstimatedTotalSubtreeCost="1.824">
+     <OutputList/><Warnings><SpillToTempDb SpillLevel="1" /></Warnings>
+     <TableScan Ordered="false"><Object Database="[Demo]" Schema="[dbo]" Table="[DemoOrders]"/></TableScan>
+    </RelOp>
+   </QueryPlan>
+  </StmtSimple>
+ </Statements></Batch></BatchSequence>
+</ShowPlanXML>

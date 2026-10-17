@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1320">
+  <meta name="description" content="Local SQL Server plan inspector and reproducible read-only SQL benchmark studio">
+  <title>KTNS SQL Benchmark Studio</title>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="KTNS SQL Benchmark Studio Home">
+      <span class="brand-icon"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="4" y="4" width="20" height="20" rx="5"/><path d="M9 11h10M9 17h5m4 0h1"/></svg></span>
+      <span><strong>KTNS <em>SQL</em></strong><small>BENCHMARK STUDIO</small></span>
+    </a>
+    <div class="nav-group-label">WORKSPACE</div>
+    <nav class="menu" aria-label="Primary navigation">
+      <button class="nav-item active" type="button" data-tab="benchmark" aria-current="page"><span class="nav-glyph">▤</span> Benchmark Lab <span class="nav-end">↗</span></button>
+      <button class="nav-item" type="button" data-tab="plans"><span class="nav-glyph">◇</span> Plan Inspector <span class="nav-end">↗</span></button>
+      <button class="nav-item" type="button" data-tab="about"><span class="nav-glyph">▣</span> About &amp; Safety <span class="nav-end">↗</span></button>
+    </nav>
+    <div class="side-footer">
+      <div class="private-badge"><span class="small-dot"></span> LOCAL-FIRST SYSTEM</div>
+      <p>No account. No SQL uploaded. Nothing leaves your computer.</p>
+      <div class="edition">COMMUNITY EDITION <span>v0.1</span></div>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <span class="breadcrumbs">Workspace <span>›</span> <b id="currentTab">Benchmark Lab</b></span>
+      <span class="top-status" id="connectionStatus"><span class="small-dot"></span> Local engine</span>
+    </header>
+    <main class="content">
+      <div class="masthead"><div><div class="eyebrow">PERFORMANCE ENGINEERING <span> / LOCAL MODE</span></div>
+        <h1>SQL clarity, <span>by design.</span></h1>
+        <p>Analyze execution plans. Benchmark safely. Understand the tradeoffs.</p></div>
+        <div class="masthead-badge">◆ <span>NO CLOUD REQUIRED</span></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><span>Analysis engine</span><b>2</b><small>Plan inspection · Benchmarking</small></div>
+        <div class="metric"><span>Demo workload</span><b>12,000</b><small>Synthetic order records</small></div>
+        <div class="metric"><span>Safe SQL execution</span><b>Read-only</b><small>Authorized and time-bounded</small></div>
+        <div class="metric"><span>Data transfer</span><b>0 KB</b><small>Processing stays on device</small></div>
+      </div>
+      <section id="benchmark" class="tab-view" aria-labelledby="benchmarkTitle">
+        <div class="section-head"><div><div class="section-kicker">01 / BENCHMARK LAB</div>
+          <h2 id="benchmarkTitle">Query Performance Lab</h2><p>Run SQL queries against an in-memory synthetic dataset. Compare latency and results.</p></div>
+          <button id="loadExamples" type="button" class="ghost-button">↻ Load examples</button></div>
+        <div class="two-panels">
+          <article class="panel"><div class="panel-title"><span class="number-chip">A</span><div><b>Baseline query</b><small>The original SQL implementation</small></div></div>
+            <label for="sqlBefore" class="sr-only">Baseline SQL query</label><textarea id="sqlBefore" spellcheck="false" placeholder="Enter a read-only SELECT query..."></textarea>
+            <span class="editor-caption">SQLite demo dialect · SELECT / WITH only</span></article>
+          <article class="panel"><div class="panel-title"><span class="number-chip alt">B</span><div><b>Candidate query</b><small>The version you want to compare</small></div></div>
+            <label for="sqlAfter" class="sr-only">Candidate SQL query</label><textarea id="sqlAfter" spellcheck="false" placeholder="Enter your optimized query..."></textarea>
+            <span class="editor-caption">Same synthetic dataset · independent benchmark</span></article>
+        </div>
+        <div class="run-bar"><div class="run-settings"><label>Iterations <input type="number" id="iterations" min="3" max="20" value="7"></label>
+          <label>Warmups <input type="number" id="warmups" min="0" max="5" value="2"></label></div>
+          <div class="run-actions"><button id="runSingle" class="secondary-button" type="button">Run baseline</button>
+            <button id="runCompare" class="primary-button" type="button"><span>▶</span> Compare queries</button></div></div>
+        <div id="benchmarkMessage" class="message" role="status" aria-live="polite">Ready to run on the local test dataset.</div>
+        <div id="benchmarkResults" class="results-area" hidden>
+          <div class="results-header"><div><span class="section-kicker">BENCHMARK RESULTS</span><h3>Execution summary</h3></div>
+            <button id="downloadBench" type="button" class="ghost-button">⇩ Export JSON</button></div>
+          <div class="results-metrics" id="benchCards"></div>
+          <div class="chart-container"><div class="panel-title"><b>Timing distribution</b><small>Each bar is one measured iteration (milliseconds)</small></div><div id="timingBars" class="timing-bars"></div></div>
+          <details class="details-panel"><summary>Query plan and raw metrics</summary><pre id="benchJSON"></pre></details>
+        </div>
+      </section>
+      <section id="plans" class="tab-view" hidden aria-labelledby="plansTitle">
+        <div class="section-head"><div><div class="section-kicker">02 / EXECUTION PLAN INSPECTOR</div>
+          <h2 id="plansTitle">SQL Server ShowPlan Analysis</h2><p>Inspect saved .sqlplan XML offline, then compare optimizer estimates and operator diagnostics.</p></div>
+          <button id="loadPlanExamples" type="button" class="ghost-button">↻ Load sample plans</button></div>
+        <div class="notice">ⓘ <span>SQL Server plan costs are <strong>estimated optimizer units</strong>, not milliseconds. No SQL Server connection is required.</span></div>
+        <div class="two-panels">
+          <article class="panel"><div class="panel-title"><span class="number-chip">A</span><div><b>Before · .sqlplan</b><small>Upload a local execution plan</small></div></div>
+            <label class="upload" for="fileBefore">＋ Choose .sqlplan file <input type="file" id="fileBefore" accept=".sqlplan,.xml,text/xml,application/xml"></label>
+            <label for="planBefore" class="sr-only">Baseline ShowPlan XML</label><textarea id="planBefore" class="plan-input" spellcheck="false" placeholder="Or paste SQL Server ShowPlan XML here"></textarea></article>
+          <article class="panel"><div class="panel-title"><span class="number-chip alt">B</span><div><b>After · .sqlplan</b><small>Optional plan to compare</small></div></div>
+            <label class="upload" for="fileAfter">＋ Choose .sqlplan file <input type="file" id="fileAfter" accept=".sqlplan,.xml,text/xml,application/xml"></label>
+            <label for="planAfter" class="sr-only">Candidate ShowPlan XML</label><textarea id="planAfter" class="plan-input" spellcheck="false" placeholder="Or paste a second plan here"></textarea></article>
+        </div>
+        <div class="run-bar"><span class="muted-footnote">Plan data is parsed in a loopback-only local process.</span>
+          <div class="run-actions"><button id="inspectPlan" class="secondary-button" type="button">Inspect A</button>
+            <button id="comparePlans" class="primary-button" type="button">◇ Compare plans</button></div></div>
+        <div id="planMessage" class="message" role="status" aria-live="polite">Load sample plans or select your own .sqlplan files.</div>
+        <div id="planResults" class="results-area" hidden>
+          <div class="results-header"><div><span class="section-kicker">PLAN REPORT</span><h3>Diagnostic overview</h3></div>
+            <button id="downloadPlan" type="button" class="ghost-button">⇩ Export JSON</button></div>
+          <div class="results-metrics" id="planCards"></div><div class="findings" id="planFindings"></div>
+          <details class="details-panel"><summary>Operator details and raw analysis</summary><pre id="planJSON"></pre></details>
+        </div>
+      </section>
+      <section id="about" class="tab-view" hidden aria-labelledby="aboutTitle">
+        <div class="section-head"><div><div class="section-kicker">03 / PROJECT NOTES</div><h2 id="aboutTitle">Designed for safer diagnostics</h2><p>A transparent software engineering sample with explicit limitations.</p></div></div>
+        <div class="about-grid">
+          <article class="panel about"><span class="about-icon">⌘</span><h3>Entirely local</h3><p>Runs on 127.0.0.1 only. Benchmark queries execute against fabricated in-memory records. Files are not uploaded to any external service.</p></article>
+          <article class="panel about"><span class="about-icon">◈</span><h3>Read-only evaluation</h3><p>SQLite query authorization rejects writes. Query execution has time, row count and iteration limits. Never point benchmark tools at sensitive production systems.</p></article>
+          <article class="panel about"><span class="about-icon">▤</span><h3>Meaningful reporting</h3><p>ShowPlan diagnostics highlight scans, spills and missing-index hints, without pretending optimizer costs are execution times or blindly prescribing indexes.</p></article>
+          <article class="panel about"><span class="about-icon">◇</span><h3>Independently verifiable</h3><p>Use the command-line interface, automated tests and source code to reproduce results. The free edition has no licensing checks or account requirements.</p></article>
+        </div>
+        <div class="notice">⚠ <span><strong>Not a managed SQL Server monitoring service.</strong> This is a locally hosted tool for offline plan inspection and bounded demo/SQLite benchmarks. It does not collect credentials or connect to customer SQL Server instances.</span></div>
+      </section>
+      <footer>KTNSINNOVATIONS LLC · SQL Benchmark Studio <span>Local community edition · All sample data is fabricated</span></footer>
+    </main>
+  </div>
+</div>
+</body>
+</html>
